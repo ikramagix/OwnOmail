@@ -17,8 +17,8 @@ add_filter('wp_mail_from_name', 'ownomail_get_sender_name');
  * Fetch the sender email from options
  */
 function ownomail_get_sender_email() {
-    $email = get_option('ownomail_sender_email', 'ownomail@example.com');
-    return filter_var($email, FILTER_VALIDATE_EMAIL) ? $email : 'ownomail@example.com';
+    $email = get_option('ownomail_sender_email', 'your_custom_ownomail@example.com');
+    return filter_var($email, FILTER_VALIDATE_EMAIL) ? $email : 'your_custom_ownomail@example.com';
 }
 
 /**
@@ -76,7 +76,7 @@ function ownomail_settings_page() {
 
     ?>
     <div class="wrap">
-        <h1><?php esc_html_e('OwnOmail Settings', 'ownomail'); ?></h1>
+        <h1><?php esc_html_e('OwnOmail Plugin Settings', 'ownomail'); ?></h1>
 
         <!-- Display admin notices (errors, warnings, success) -->
         <?php settings_errors('ownomail_settings'); ?>
