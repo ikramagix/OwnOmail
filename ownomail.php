@@ -25,7 +25,7 @@ function ownomail_get_sender_email() {
  * Fetch the sender name from options
  */
 function ownomail_get_sender_name() {
-    $name = get_option('ownomail_sender_name', 'Sent with OwnOmail');
+    $name = get_option('ownomail_sender_name', 'Custom-made, made simple—thanks to OwnOmail');
     return sanitize_text_field($name);
 }
 
