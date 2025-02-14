@@ -8,6 +8,7 @@ License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 OwnOmail is a minimalist plugin that customizes the sender email and name for all WordPress-generated emails. It’s designed to be straightforward, efficient, and does exactly what it supposed to—plain and simple.
+
 == Description ==
 - Change your WordPress sender name and address with a few clicks.
 - Keeps your WordPress installation clean by avoiding core file edits.
