@@ -3,7 +3,7 @@ Contributors: @ikramagix
 Tags: email, customization, sender name, sender email, wp_mail, from address, site identity, email settings, mail customization, no-code
 Requires at least: 5.0
 Tested up to: 6.7.
-Stable tag: 1.4.
+Stable tag: 1.0.
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -41,5 +41,3 @@ OwnOmail is a minimalist plugin that customizes the sender email and name for al
 == Changelog ==
 = 1.0 =
 * Initial release of OwnOmail.
-= 1.4 =
-* Supports notifications/alerts for the outcome of the query when saving.
