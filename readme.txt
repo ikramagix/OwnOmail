@@ -1,4 +1,4 @@
-=== OwnOmail: Custom Email Settings ===
+=== OwnOmail: Custom-made. Made simple. Custom Email Settings: Change your sender name, email address and more ===
 Contributors: @ikramagix
 Tags: email, customization
 Requires at least: 5.0
