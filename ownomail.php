@@ -3,7 +3,7 @@
 Plugin Name: OwnOmail
 Plugin URI: https://github.com/ikramagix/OwnOmail
 Description: Minimalist plugin to customize the sender email address and name for WordPress-generated emails.
-Version: 1.3
+Version: 1.4
 Author: @ikramagix
 Author URI: https://ikramagix.com
 License: GPL2
