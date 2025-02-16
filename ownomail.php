@@ -15,9 +15,9 @@ if (!defined('ABSPATH')) {
 }
 
 // Load functionalities
-require_once plugin_dir_path(__FILE__) . 'includes/email-functions.php';
+require_once plugin_dir_path(__FILE__) . 'includes/ownomail-email-functions.php';
 
 // Load admin settings if in admin area
 if (is_admin()) {
-    require_once plugin_dir_path(__FILE__) . 'includes/admin-settings.php';
+    require_once plugin_dir_path(__FILE__) . 'includes/ownomail-admin-settings.php';
 }
