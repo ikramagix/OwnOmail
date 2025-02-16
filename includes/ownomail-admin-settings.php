@@ -1,7 +1,17 @@
-<?php
+<?php 
 if (!defined('ABSPATH')) {
     exit; // Prevent direct access
 }
+
+/**
+ * Show an admin notice if mbstring is missing.
+ */
+function ownomail_admin_notice_mbstring() {
+    if (!extension_loaded('mbstring')) {
+        echo '<div class="error"><p><strong>OwnOmail Error:</strong> The PHP <code>mbstring</code> extension is missing. Please install it or ask your host to enable it.</p></div>';
+    }
+}
+add_action('admin_notices', 'ownomail_admin_notice_mbstring');
 
 /**
  * Register plugin settings with validation callbacks.
@@ -33,6 +43,29 @@ function ownomail_add_admin_menu() {
 add_action('admin_menu', 'ownomail_add_admin_menu');
 
 /**
+ * Validate and sanitize sender email.
+ */
+function ownomail_validate_sender_email($email) {
+    $email = sanitize_email($email);
+    if (!is_email($email)) {
+        add_settings_error('ownomail_sender_email', 'invalid_email', __('Invalid email address.', 'ownomail'));
+        return get_option('ownomail_sender_email', 'email@ownomail.com');
+    }
+    return $email;
+}
+
+/**
+ * Validate and sanitize sender name.
+ */
+function ownomail_validate_sender_name($name) {
+    if (!extension_loaded('mbstring')) {
+        return get_option('ownomail_sender_name', 'OwnOmail Sender');
+    }
+    $name = mb_strimwidth(sanitize_text_field($name), 0, 50, "...");
+    return $name;
+}
+
+/**
  * Render the settings page.
  */
 function ownomail_settings_page() {
@@ -62,7 +95,7 @@ function ownomail_settings_page() {
                     </th>
                     <td>
                         <input type="text" id="ownomail_sender_name" name="ownomail_sender_name"
-                               value="<?php echo esc_attr(get_option('ownomail_sender_name', 'Custom-made, made simple—thanks to OwnOmail')); ?>"
+                               value="<?php echo esc_attr(get_option('ownomail_sender_name', 'OwnOmail Sender')); ?>"
                                required maxlength="50"/>
                         <p class="description"><?php esc_html_e('Enter the name that will appear as the sender in WordPress emails. Maximum 50 characters.', 'ownomail'); ?></p>
                     </td>
