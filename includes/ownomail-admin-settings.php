@@ -1,4 +1,4 @@
-<?php 
+<?php
 if (!defined('ABSPATH')) {
     exit; // Prevent direct access
 }
@@ -18,10 +18,10 @@ add_action('admin_notices', 'ownomail_admin_notice_mbstring');
  */
 function ownomail_register_settings() {
     register_setting('ownomail_options_group', 'ownomail_sender_email', [
-        'sanitize_callback' => 'ownomail_validate_sender_email',
+        'sanitize_callback' => 'ownomail_validate_sender_email', // Function from ownomail-email-functions.php
     ]);
     register_setting('ownomail_options_group', 'ownomail_sender_name', [
-        'sanitize_callback' => 'ownomail_validate_sender_name',
+        'sanitize_callback' => 'ownomail_validate_sender_name', // Function from ownomail-email-functions.php
     ]);
 }
 add_action('admin_init', 'ownomail_register_settings');
@@ -41,29 +41,6 @@ function ownomail_add_admin_menu() {
     );
 }
 add_action('admin_menu', 'ownomail_add_admin_menu');
-
-/**
- * Validate and sanitize sender email.
- */
-function ownomail_validate_sender_email($email) {
-    $email = sanitize_email($email);
-    if (!is_email($email)) {
-        add_settings_error('ownomail_sender_email', 'invalid_email', __('Invalid email address.', 'ownomail'));
-        return get_option('ownomail_sender_email', 'email@ownomail.com');
-    }
-    return $email;
-}
-
-/**
- * Validate and sanitize sender name.
- */
-function ownomail_validate_sender_name($name) {
-    if (!extension_loaded('mbstring')) {
-        return get_option('ownomail_sender_name', 'OwnOmail Sender');
-    }
-    $name = mb_strimwidth(sanitize_text_field($name), 0, 50, "...");
-    return $name;
-}
 
 /**
  * Render the settings page.
