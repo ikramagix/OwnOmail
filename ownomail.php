@@ -6,7 +6,7 @@ Description: Minimalist plugin to customize the sender email address and name fo
 Version: 1.0
 Author: @ikramagix
 Author URI: https://ikramagix.com
-License: GPL2
+License: AGPLv3
 */
 
 // Prevent direct access
