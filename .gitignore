@@ -1,0 +1,3 @@
+# Ignore under construction plugin files
+includes/ownomail-email-signature.php
+includes/ownomail-test-email.php
