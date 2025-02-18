@@ -28,7 +28,7 @@ function ownomail_validate_sender_email($email) {
             'ownomail_options_group',
             'invalid_email',
             __('⚠️ Warning: The email format is invalid. Using previous value.', 'ownomail'),
-            'warning'
+            'error'
         );
         return get_option('ownomail_sender_email', 'email@ownomail.com');
     }
@@ -60,7 +60,7 @@ function ownomail_validate_sender_name($name) {
             'ownomail_options_group',
             'name_too_long',
             __('⚠️ Warning: The sender name exceeded 50 characters. It was truncated.', 'ownomail'),
-            'warning'
+            'error'
         );
         return mb_substr($name, 0, 50);
     }
