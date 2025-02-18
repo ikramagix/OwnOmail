@@ -8,7 +8,7 @@ if (!defined('ABSPATH')) {
  * Validate and sanitize email address.
  *
  * @param string $email The email address to validate.
- * @return string The sanitized email if valid; default email otherwise.
+ * @return string The sanitized email if valid; previous value if invalid.
  */
 function ownomail_validate_sender_email($email) {
     $email = sanitize_email($email);
@@ -17,7 +17,7 @@ function ownomail_validate_sender_email($email) {
         add_settings_error(
             'ownomail_options_group',
             'empty_email',
-            __('Error: The sender email cannot be empty.', 'ownomail'),
+            __('❌ Error: The sender email cannot be empty.', 'ownomail'),
             'error'
         );
         return get_option('ownomail_sender_email', 'email@ownomail.com');
@@ -27,7 +27,7 @@ function ownomail_validate_sender_email($email) {
         add_settings_error(
             'ownomail_options_group',
             'invalid_email',
-            __('Warning: The email entered is not valid. Using the default OwnOmail value.', 'ownomail'),
+            __('⚠️ Warning: The email format is invalid. Using previous value.', 'ownomail'),
             'warning'
         );
         return get_option('ownomail_sender_email', 'email@ownomail.com');
@@ -49,17 +49,17 @@ function ownomail_validate_sender_name($name) {
         add_settings_error(
             'ownomail_options_group',
             'empty_name',
-            __('Error: The sender name cannot be empty.', 'ownomail'),
+            __('❌ Error: The sender name cannot be empty.', 'ownomail'),
             'error'
         );
-        return get_option('ownomail_sender_name', 'Custom-made, made simple—thanks to OwnOmail');
+        return get_option('ownomail_sender_name', 'OwnOmail Sender');
     }
 
     if (mb_strlen($name) > 50) {
         add_settings_error(
             'ownomail_options_group',
             'name_too_long',
-            __('Warning: The sender name exceeds 50 characters. It has been truncated.', 'ownomail'),
+            __('⚠️ Warning: The sender name exceeded 50 characters. It was truncated.', 'ownomail'),
             'warning'
         );
         return mb_substr($name, 0, 50);
@@ -76,6 +76,6 @@ add_filter('wp_mail_from', function($original_email_address) {
 
 // Modify "From" name
 add_filter('wp_mail_from_name', function($original_email_from) {
-    $name = get_option('ownomail_sender_name', 'Custom-made, made simple—thanks to OwnOmail');
+    $name = get_option('ownomail_sender_name', 'OwnOmail Sender');
     return ownomail_validate_sender_name($name);
 });

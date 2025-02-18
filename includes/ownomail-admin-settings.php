@@ -14,7 +14,7 @@ function ownomail_admin_notice_mbstring() {
 add_action('admin_notices', 'ownomail_admin_notice_mbstring');
 
 /**
- * Register plugin settings with validation callbacks and confirmation notice.
+ * Register plugin settings with validation callbacks.
  */
 function ownomail_register_settings() {
     register_setting('ownomail_options_group', 'ownomail_sender_email', [
@@ -24,18 +24,14 @@ function ownomail_register_settings() {
         'sanitize_callback' => 'ownomail_validate_sender_name',
     ]);
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $updated_email = get_option('ownomail_sender_email');
-        $updated_name = get_option('ownomail_sender_name');
-
-        if (!empty($updated_email) && !empty($updated_name)) {
-            add_settings_error(
-                'ownomail_messages',
-                'ownomail_settings_saved',
-                __('OwnOmail settings have been saved successfully.', 'ownomail'),
-                'success'
-            );
-        }
+    // Check for a successful settings update
+    if (!empty($_POST) && empty(get_settings_errors('ownomail_options_group'))) {
+        add_settings_error(
+            'ownomail_options_group',
+            'settings_saved',
+            __('✅ OwnOmail settings have been saved successfully.', 'ownomail'),
+            'success'
+        );
     }
 }
 add_action('admin_init', 'ownomail_register_settings');
@@ -44,10 +40,9 @@ add_action('admin_init', 'ownomail_register_settings');
  * Display admin notices for settings updates.
  */
 function ownomail_admin_notices() {
-    settings_errors('ownomail_messages');
+    settings_errors('ownomail_options_group');
 }
 add_action('admin_notices', 'ownomail_admin_notices');
-
 
 /**
  * Add settings page to the admin menu.
@@ -59,7 +54,7 @@ function ownomail_add_admin_menu() {
         'manage_options',
         'ownomail',
         'ownomail_settings_page',
-        'dashicons-buddicons-pm',
+        'dashicons-email-alt',
         100
     );
 }
