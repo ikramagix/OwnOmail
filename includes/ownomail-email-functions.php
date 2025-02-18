@@ -12,7 +12,28 @@ if (!defined('ABSPATH')) {
  */
 function ownomail_validate_sender_email($email) {
     $email = sanitize_email($email);
-    return is_email($email) ? $email : 'email@ownomail.com';
+    
+    if (empty($email)) {
+        add_settings_error(
+            'ownomail_options_group',
+            'empty_email',
+            __('Error: The sender email cannot be empty.', 'ownomail'),
+            'error'
+        );
+        return get_option('ownomail_sender_email', 'email@ownomail.com');
+    }
+
+    if (!is_email($email)) {
+        add_settings_error(
+            'ownomail_options_group',
+            'invalid_email',
+            __('Warning: The email entered is not valid. Using the default OwnOmail value.', 'ownomail'),
+            'warning'
+        );
+        return get_option('ownomail_sender_email', 'email@ownomail.com');
+    }
+
+    return $email;
 }
 
 /**
@@ -23,7 +44,28 @@ function ownomail_validate_sender_email($email) {
  */
 function ownomail_validate_sender_name($name) {
     $name = sanitize_text_field($name);
-    return mb_strimwidth($name, 0, 50);
+    
+    if (empty($name)) {
+        add_settings_error(
+            'ownomail_options_group',
+            'empty_name',
+            __('Error: The sender name cannot be empty.', 'ownomail'),
+            'error'
+        );
+        return get_option('ownomail_sender_name', 'Custom-made, made simple—thanks to OwnOmail');
+    }
+
+    if (mb_strlen($name) > 50) {
+        add_settings_error(
+            'ownomail_options_group',
+            'name_too_long',
+            __('Warning: The sender name exceeds 50 characters. It has been truncated.', 'ownomail'),
+            'warning'
+        );
+        return mb_substr($name, 0, 50);
+    }
+
+    return $name;
 }
 
 // Modify "From" email address
