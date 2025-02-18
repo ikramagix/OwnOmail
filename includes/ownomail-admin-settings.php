@@ -33,7 +33,7 @@ function ownomail_register_settings() {
                 'ownomail_messages',
                 'ownomail_settings_saved',
                 __('OwnOmail settings have been saved successfully.', 'ownomail'),
-                'success' // Fix: Use 'success' instead of 'updated'
+                'success'
             );
         }
     }
