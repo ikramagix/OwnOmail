@@ -96,3 +96,14 @@ add_filter('wp_mail_from_name', function($original_email_from) {
     $name = get_option('ownomail_sender_name', 'Custom-made, made simple by OwnOmail');
     return ownomail_validate_sender_name($name);
 });
+
+add_action('phpmailer_init', function ($phpmailer) {
+    if (!ownomail_detect_smtp()) {
+        return; // Use default PHP mail if no SMTP detected
+    }
+
+    $phpmailer->isSMTP();
+    $phpmailer->Host = ini_get('SMTP') ?: 'localhost';
+    $phpmailer->SMTPAuth = false; // If using a relay, authentication is not needed
+    $phpmailer->Port = ini_get('smtp_port') ?: 25; // Default SMTP port
+});
