@@ -52,7 +52,7 @@ function ownomail_validate_sender_name($name) {
             __('❌ Error: The sender name cannot be empty.', 'ownomail'),
             'error'
         );
-        return get_option('ownomail_sender_name', 'OwnOmail Sender');
+        return get_option('ownomail_sender_name', 'Custom-made, made simple by OwnOmail');
     }
 
     if (mb_strlen($name) > 50) {
@@ -76,6 +76,6 @@ add_filter('wp_mail_from', function($original_email_address) {
 
 // Modify "From" name
 add_filter('wp_mail_from_name', function($original_email_from) {
-    $name = get_option('ownomail_sender_name', 'OwnOmail Sender');
+    $name = get_option('ownomail_sender_name', 'Custom-made, made simple by OwnOmail');
     return ownomail_validate_sender_name($name);
 });
