@@ -5,21 +5,42 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Detect if SMTP is already configured.
- *
- * @return bool Returns true if SMTP is detected.
+ * Detect SMTP availability.
+ * Returns true if an SMTP server is configured and reachable.
  */
 function ownomail_detect_smtp() {
-    $sendmail_path = ini_get('sendmail_path');
+    $smtp_host = ini_get('SMTP') ?: 'localhost';
+    $smtp_port = ini_get('smtp_port') ?: 25;
 
-    if ($sendmail_path && (strpos($sendmail_path, 'msmtp') !== false ||
-                           strpos($sendmail_path, 'postfix') !== false ||
-                           strpos($sendmail_path, 'exim') !== false)) {
+    // Validate SMTP availability (try connecting)
+    $connection = @fsockopen($smtp_host, $smtp_port, $errno, $errstr, 2);
+    if ($connection) {
+        fclose($connection);
         return true;
     }
-
-    return false; // If no SMTP is detected from hosting provider
+    return false;
 }
+
+/**
+ * Auto-configure PHPMailer if a third-party SMTP is available.
+ *
+ * Otherwise, do nothing and let WordPress default to PHP's mail().
+ */
+function ownomail_configure_mailer($phpmailer) {
+    // Basic checks
+    if (!isset($phpmailer)) {
+        return;
+    }
+
+    // If we detect a working SMTP host, configure it
+    if (ownomail_detect_smtp()) {
+        $phpmailer->isSMTP();
+        $phpmailer->Host     = ini_get('SMTP') ?: 'localhost';
+        $phpmailer->Port     = ini_get('smtp_port') ?: 25;
+        $phpmailer->SMTPAuth = false; // Most local relays don’t require authentication
+    }
+}
+add_action('phpmailer_init', 'ownomail_configure_mailer');
 
 /**
  * Validate and sanitize email address.
@@ -95,15 +116,4 @@ add_filter('wp_mail_from', function($original_email_address) {
 add_filter('wp_mail_from_name', function($original_email_from) {
     $name = get_option('ownomail_sender_name', 'Custom-made, made simple by OwnOmail');
     return ownomail_validate_sender_name($name);
-});
-
-add_action('phpmailer_init', function ($phpmailer) {
-    if (!ownomail_detect_smtp()) {
-        return; // Use default PHP mail if no SMTP detected
-    }
-
-    $phpmailer->isSMTP();
-    $phpmailer->Host = ini_get('SMTP') ?: 'localhost';
-    $phpmailer->SMTPAuth = false; // If using a relay, authentication is not needed
-    $phpmailer->Port = ini_get('smtp_port') ?: 25; // Default SMTP port
 });
