@@ -5,6 +5,23 @@ if (!defined('ABSPATH')) {
 }
 
 /**
+ * Detect if SMTP is already configured.
+ *
+ * @return bool Returns true if SMTP is detected.
+ */
+function ownomail_detect_smtp() {
+    $sendmail_path = ini_get('sendmail_path');
+
+    if ($sendmail_path && (strpos($sendmail_path, 'msmtp') !== false ||
+                           strpos($sendmail_path, 'postfix') !== false ||
+                           strpos($sendmail_path, 'exim') !== false)) {
+        return true;
+    }
+
+    return false; // If no SMTP is detected from hosting provider
+}
+
+/**
  * Validate and sanitize email address.
  *
  * @param string $email The email address to validate.
