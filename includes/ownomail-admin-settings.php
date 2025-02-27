@@ -20,7 +20,7 @@ function ownomail_admin_notice_smtp() {
     if (!ownomail_detect_smtp()) {
         echo '<div class="notice notice-warning"><p><strong>OwnOmail Notice:</strong> 
         No SMTP relay detected. Emails will be sent using PHP’s default mailer.
-        OwnOmail will apply your settings and will be functional. NOTICE: Emails sent from your website could potentially be falsely detected as spam and/or placed in the junk folder. We recommend requesting a test email to make sure it doesn't.</p></div>';
+        OwnOmail will apply your settings and will be functional. NOTICE: Emails sent from your website could potentially be falsely detected as spam and/or placed in the junk folder.</p></div>';
     }
 }
 add_action('admin_notices', 'ownomail_admin_notice_smtp');
