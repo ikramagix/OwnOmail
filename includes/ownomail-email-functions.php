@@ -90,7 +90,7 @@ function ownomail_validate_sender_name($name) {
             __('❌ Error: The sender name cannot be empty.', 'ownomail'),
             'error'
         );
-        return get_option('ownomail_sender_name', 'Custom-made, made simple by OwnOmail');
+        return get_option('ownomail_sender_name', 'Custom-made, made simple with OwnOmail');
     }
 
     if (mb_strlen($name) > 50) {

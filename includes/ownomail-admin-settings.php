@@ -141,7 +141,7 @@ function ownomail_settings_page() {
             </div>
         <?php else: ?>
             <div class="notice notice-warning">
-                <p><?php _e('No SMTP Relay Detected. Your emails will fall back to PHP’s default mail() function.', 'ownomail'); ?></p>
+                <p><?php _e('No SMTP Relay Detected. Your emails will fall back to PHP default mail() function.', 'ownomail'); ?></p>
             </div>
         <?php endif; ?>
 
@@ -212,7 +212,7 @@ function ownomail_settings_page() {
 
         <!-- Test Email Form -->
         <hr/>
-        <h2><?php esc_html_e('Hello from OwnOmail! ⭐', 'ownomail'); ?></h2>
+        <h2><?php esc_html_e('Try saying hello from OwnOmail! ⭐', 'ownomail'); ?></h2>
         <p><?php esc_html_e('Send a quick test email to confirm everything is working!', 'ownomail'); ?></p>
         <form method="post">
             <?php wp_nonce_field('ownomail_test_email_action', 'ownomail_test_email_nonce'); ?>
