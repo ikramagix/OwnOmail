@@ -29,12 +29,13 @@ function ownomail_configure_mailer($phpmailer) {
             $phpmailer->SMTPAuth = false;
         }
 
-        // Set encryption if defined
-        $encryption = get_option('ownomail_smtp_encryption', 'none');
+        // Force SSL or TLS only
+        $encryption = get_option('ownomail_smtp_encryption', 'ssl');  // Default to 'ssl' if not set
         if (in_array($encryption, ['ssl', 'tls'])) {
             $phpmailer->SMTPSecure = $encryption;
         } else {
-            $phpmailer->SMTPSecure = '';
+            // Force SSL if somehow an invalid option is stored
+            $phpmailer->SMTPSecure = 'ssl';
         }
 
         // Set debug mode for SMTP if enabled in settings

@@ -7,15 +7,11 @@ if (!defined('ABSPATH')) {
  * Register plugin settings with validation callbacks.
  */
 function ownomail_register_settings() {
-    register_setting('ownomail_options_group', 'ownomail_sender_email', [
-        'sanitize_callback' => 'ownomail_validate_sender_email',
-    ]);
-    register_setting('ownomail_options_group', 'ownomail_sender_name', [
-        'sanitize_callback' => 'ownomail_validate_sender_name',
-    ]);
-    register_setting('ownomail_options_group', 'ownomail_email_format', [
-        'sanitize_callback' => 'ownomail_sanitize_email_format',
-    ]);
+    register_setting('ownomail_options_group', 'ownomail_sender_email');
+    register_setting('ownomail_options_group', 'ownomail_sender_name');
+    register_setting('ownomail_options_group', 'ownomail_email_format');
+    
+    // Outgoing (SMTP)
     register_setting('ownomail_options_group', 'ownomail_use_smtp');
     register_setting('ownomail_options_group', 'ownomail_smtp_host');
     register_setting('ownomail_options_group', 'ownomail_smtp_port');
@@ -101,54 +97,118 @@ function ownomail_handle_form_submission() {
 add_action('admin_post_ownomail_save_settings', 'ownomail_handle_form_submission');
 
 /**
- * Render the OwnOmail settings page with separate forms.
+ * Render the OwnOmail settings page with Bootstrap.
  */
 function ownomail_settings_page() {
     ?>
-    <div class="wrap">
-        <h1><?php esc_html_e('OwnOmail Settings', 'ownomail'); ?></h1>
+    <div class="wrap container my-5">
+        <h1 class="mb-4"><?php esc_html_e('OwnOmail Settings', 'ownomail'); ?></h1>
         
-        <!-- Sender Email -->
-        <form method="post" action="<?php echo admin_url('admin-post.php'); ?>">
-            <?php wp_nonce_field('ownomail_settings_action', 'ownomail_settings_nonce'); ?>
-            <input type="hidden" name="action" value="ownomail_save_settings">
-            <input type="hidden" name="ownomail_action" value="update_sender_email">
-            <label>Sender Email:</label>
-            <input type="email" name="ownomail_sender_email" value="<?php echo esc_attr(get_option('ownomail_sender_email', '')); ?>">
-            <input type="submit" value="Update Email">
-        </form>
+        <!-- Sender Information -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Sender Information</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" action="<?php echo admin_url('admin-post.php'); ?>">
+                    <?php wp_nonce_field('ownomail_settings_action', 'ownomail_settings_nonce'); ?>
+                    <input type="hidden" name="action" value="ownomail_save_settings">
+                    <input type="hidden" name="ownomail_action" value="update_sender_email">
 
-        <!-- Sender Name -->
-        <form method="post" action="<?php echo admin_url('admin-post.php'); ?>">
-            <input type="hidden" name="action" value="ownomail_save_settings">
-            <input type="hidden" name="ownomail_action" value="update_sender_name">
-            <label>Sender Name:</label>
-            <input type="text" name="ownomail_sender_name" value="<?php echo esc_attr(get_option('ownomail_sender_name', '')); ?>">
-            <input type="submit" value="Update Name">
-        </form>
+                    <div class="form-group">
+                        <label for="sender_email">Sender Email</label>
+                        <input type="email" class="form-control" id="sender_email" name="ownomail_sender_email"
+                               value="<?php echo esc_attr(get_option('ownomail_sender_email', '')); ?>" required>
+                    </div>
 
-        <!-- Email Format -->
-        <form method="post" action="<?php echo admin_url('admin-post.php'); ?>">
-            <input type="hidden" name="action" value="ownomail_save_settings">
-            <input type="hidden" name="ownomail_action" value="update_email_format">
-            <label>Email Format:</label>
-            <select name="ownomail_email_format">
-                <option value="html" <?php selected(get_option('ownomail_email_format'), 'html'); ?>>HTML</option>
-                <option value="text" <?php selected(get_option('ownomail_email_format'), 'text'); ?>>Text</option>
-            </select>
-            <input type="submit" value="Update Format">
-        </form>
-        
-        <!-- SMTP Settings -->
-        <form method="post" action="<?php echo admin_url('admin-post.php'); ?>">
-            <input type="hidden" name="action" value="ownomail_save_settings">
-            <input type="hidden" name="ownomail_action" value="update_smtp_settings">
-            <label>SMTP Host:</label>
-            <input type="text" name="ownomail_smtp_host" value="<?php echo esc_attr(get_option('ownomail_smtp_host', '')); ?>">
-            <label>SMTP Port:</label>
-            <input type="number" name="ownomail_smtp_port" value="<?php echo esc_attr(get_option('ownomail_smtp_port', '587')); ?>">
-            <input type="submit" value="Update SMTP Settings">
-        </form>
+                    <div class="form-group">
+                        <label for="sender_name">Sender Name</label>
+                        <input type="text" class="form-control" id="sender_name" name="ownomail_sender_name"
+                               value="<?php echo esc_attr(get_option('ownomail_sender_name', '')); ?>" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Save Sender Info</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Email Format (HTML or Text) -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Email Format</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" action="<?php echo admin_url('admin-post.php'); ?>">
+                    <input type="hidden" name="action" value="ownomail_save_settings">
+                    <input type="hidden" name="ownomail_action" value="update_email_format">
+
+                    <div class="form-group">
+                        <label for="email_format">Email Format</label>
+                        <select id="email_format" name="ownomail_email_format" class="form-control">
+                            <option value="html" <?php selected(get_option('ownomail_email_format'), 'html'); ?>>HTML</option>
+                            <option value="text" <?php selected(get_option('ownomail_email_format'), 'text'); ?>>Text</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Save Email Format</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- SMTP Settings (Outgoing) -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Outgoing Mail (SMTP)</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" action="<?php echo admin_url('admin-post.php'); ?>">
+                    <input type="hidden" name="action" value="ownomail_save_settings">
+                    <input type="hidden" name="ownomail_action" value="update_smtp_settings">
+
+                    <div class="form-group form-check mb-4">
+                        <input type="checkbox" class="form-check-input" id="use_smtp" name="ownomail_use_smtp" value="1"
+                               <?php checked(1, get_option('ownomail_use_smtp', 0)); ?>>
+                        <label class="form-check-label" for="use_smtp">Use SMTP for sending emails</label>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="smtp_host">SMTP Host</label>
+                        <input type="text" class="form-control" id="smtp_host" name="ownomail_smtp_host"
+                               value="<?php echo esc_attr(get_option('ownomail_smtp_host', '')); ?>" placeholder="mail.example.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="smtp_port">SMTP Port</label>
+                        <input type="number" class="form-control" id="smtp_port" name="ownomail_smtp_port"
+                               value="<?php echo esc_attr(get_option('ownomail_smtp_port', '465')); ?>" placeholder="465 or 587">
+                        <small class="form-text text-muted">Typically 465 (SSL) or 587 (TLS).</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="smtp_username">SMTP Username</label>
+                        <input type="text" class="form-control" id="smtp_username" name="ownomail_smtp_username"
+                               value="<?php echo esc_attr(get_option('ownomail_smtp_username', '')); ?>" placeholder="project@example.eu">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="smtp_password">SMTP Password</label>
+                        <input type="password" class="form-control" id="smtp_password" name="ownomail_smtp_password"
+                               value="<?php echo esc_attr(get_option('ownomail_smtp_password', '')); ?>" placeholder="Your Email Password">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="smtp_encryption">Encryption</label>
+                        <select id="smtp_encryption" name="ownomail_smtp_encryption" class="form-control">
+                            <option value="ssl" <?php selected(get_option('ownomail_smtp_encryption'), 'ssl'); ?>>SSL</option>
+                            <option value="tls" <?php selected(get_option('ownomail_smtp_encryption'), 'tls'); ?>>TLS</option>
+                        </select>
+                        <small class="form-text text-muted">Required to secure your connection.</small>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Save SMTP Settings</button>
+                </form>
+            </div>
+        </div>
     </div>
     <?php
 }
