@@ -5,52 +5,57 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Detect SMTP availability.
- * Returns true if an SMTP server is configured and reachable.
- */
-function ownomail_detect_smtp() {
-    $smtp_host = ini_get('SMTP') ?: 'localhost';
-    $smtp_port = ini_get('smtp_port') ?: 25;
-
-    // Validate SMTP availability (try connecting)
-    $connection = @fsockopen($smtp_host, $smtp_port, $errno, $errstr, 2);
-    if ($connection) {
-        fclose($connection);
-        return true;
-    }
-    return false;
-}
-
-/**
- * Auto-configure PHPMailer if a third-party SMTP is available.
- *
- * Otherwise, do nothing and let WordPress default to PHP's mail().
+ * Configure PHPMailer based on user settings.
  */
 function ownomail_configure_mailer($phpmailer) {
-    // Basic checks
-    if (!isset($phpmailer)) {
-        return;
-    }
+    // Check if SMTP is enabled via settings
+    $use_smtp = get_option('ownomail_use_smtp', 0);
+    $smtp_host = get_option('ownomail_smtp_host', '');
 
-    // If we detect a working SMTP host, configure it
-    if (ownomail_detect_smtp()) {
+    if ($use_smtp && !empty($smtp_host)) {
+        // Use SMTP if enabled and host is set
         $phpmailer->isSMTP();
-        $phpmailer->Host     = ini_get('SMTP') ?: 'localhost';
-        $phpmailer->Port     = ini_get('smtp_port') ?: 25;
-        $phpmailer->SMTPAuth = false; // Most local relays don’t require authentication
+        $phpmailer->Host = $smtp_host;
+        $phpmailer->Port = get_option('ownomail_smtp_port', 587);
+        
+        // Enable authentication if username is provided
+        $smtp_username = get_option('ownomail_smtp_username', '');
+        $smtp_password = get_option('ownomail_smtp_password', '');
+        if (!empty($smtp_username)) {
+            $phpmailer->SMTPAuth = true;
+            $phpmailer->Username = $smtp_username;
+            $phpmailer->Password = $smtp_password;
+        } else {
+            $phpmailer->SMTPAuth = false;
+        }
+
+        // Set encryption if defined
+        $encryption = get_option('ownomail_smtp_encryption', 'none');
+        if (in_array($encryption, ['ssl', 'tls'])) {
+            $phpmailer->SMTPSecure = $encryption;
+        } else {
+            $phpmailer->SMTPSecure = '';
+        }
+
+        // Set debug mode for SMTP if enabled in settings
+        $smtp_debug = get_option('ownomail_smtp_debug', 0);
+        if ($smtp_debug) {
+            $phpmailer->SMTPDebug = 2;  // 2 for detailed debug
+            $phpmailer->Debugoutput = 'error_log';  // Log where you can check errors
+        }
+    } else {
+        // Fallback to default WordPress behavior using PHP mail()
+        // Do not set isSMTP() to use PHP's mail() function
+        $phpmailer->isMail();
     }
 }
 add_action('phpmailer_init', 'ownomail_configure_mailer');
 
 /**
  * Validate and sanitize email address.
- *
- * @param string $email The email address to validate.
- * @return string The sanitized email if valid; previous value if invalid.
  */
 function ownomail_validate_sender_email($email) {
     $email = sanitize_email($email);
-    
     if (empty($email)) {
         add_settings_error(
             'ownomail_options_group',
@@ -60,7 +65,6 @@ function ownomail_validate_sender_email($email) {
         );
         return get_option('ownomail_sender_email', 'email@ownomail.com');
     }
-
     if (!is_email($email)) {
         add_settings_error(
             'ownomail_options_group',
@@ -70,19 +74,14 @@ function ownomail_validate_sender_email($email) {
         );
         return get_option('ownomail_sender_email', 'email@ownomail.com');
     }
-
     return $email;
 }
 
 /**
  * Validate and sanitize sender name.
- *
- * @param string $name The sender name to validate.
- * @return string The sanitized name, truncated to 50 characters if necessary.
  */
 function ownomail_validate_sender_name($name) {
     $name = sanitize_text_field($name);
-    
     if (empty($name)) {
         add_settings_error(
             'ownomail_options_group',
@@ -92,7 +91,6 @@ function ownomail_validate_sender_name($name) {
         );
         return get_option('ownomail_sender_name', 'Custom-made, made simple with OwnOmail');
     }
-
     if (mb_strlen($name) > 50) {
         add_settings_error(
             'ownomail_options_group',
@@ -102,7 +100,6 @@ function ownomail_validate_sender_name($name) {
         );
         return mb_substr($name, 0, 50);
     }
-
     return $name;
 }
 
