@@ -12,7 +12,6 @@ function ownomail_register_settings() {
     register_setting('ownomail_options_group', 'ownomail_email_format');
     
     // Outgoing (SMTP)
-    register_setting('ownomail_options_group', 'ownomail_use_smtp');
     register_setting('ownomail_options_group', 'ownomail_smtp_host');
     register_setting('ownomail_options_group', 'ownomail_smtp_port');
     register_setting('ownomail_options_group', 'ownomail_smtp_username');
@@ -98,13 +97,12 @@ function ownomail_handle_form_submission() {
                 break;
             // Update SMTP settings
             case 'update_smtp_settings':
-                $success = update_option('ownomail_use_smtp', isset($_POST['ownomail_use_smtp'])) &&
-                        update_option('ownomail_smtp_host', sanitize_text_field($_POST['ownomail_smtp_host'])) &&
-                        update_option('ownomail_smtp_port', intval($_POST['ownomail_smtp_port'])) &&
-                        update_option('ownomail_smtp_username', sanitize_text_field($_POST['ownomail_smtp_username'])) &&
-                        update_option('ownomail_smtp_password', sanitize_text_field($_POST['ownomail_smtp_password'])) &&
-                        update_option('ownomail_smtp_encryption', sanitize_text_field($_POST['ownomail_smtp_encryption']));
-
+                $success = update_option('ownomail_smtp_host', sanitize_text_field($_POST['ownomail_smtp_host'])) &&
+                           update_option('ownomail_smtp_port', intval($_POST['ownomail_smtp_port'])) &&
+                           update_option('ownomail_smtp_username', sanitize_text_field($_POST['ownomail_smtp_username'])) &&
+                           update_option('ownomail_smtp_password', sanitize_text_field($_POST['ownomail_smtp_password'])) &&
+                           update_option('ownomail_smtp_encryption', sanitize_text_field($_POST['ownomail_smtp_encryption']));
+            
                 if ($success) {
                     set_transient('ownomail_admin_notices', [
                         'type'    => 'success',
@@ -220,42 +218,63 @@ function ownomail_settings_page() {
 
             <!-- Right Column: SMTP Settings -->
             <div class="col-md-6">
-                <div class="card mb-4 shadow-sm border-0 rounded">
-                    <div class="card-header bg-primary text-white rounded-top">
-                        <h5 class="mb-0">Outgoing Mail (SMTP)</h5>
-                    </div>
-                    <div class="card-body">
-                        <form method="post" action="<?php echo admin_url('admin-post.php'); ?>">
-                            <input type="hidden" name="action" value="ownomail_save_settings">
-                            <input type="hidden" name="ownomail_action" value="update_smtp_settings">
+            <div class="card mb-4 shadow-sm border-0 rounded">
+                <div class="card-header bg-primary text-white rounded-top">
+                    <h5 class="mb-0">Outgoing Mail (SMTP)</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Single Form to Update All SMTP Fields -->
+                    <form method="post" action="<?php echo admin_url('admin-post.php'); ?>">
+                        <?php 
+                            // Nonce for security
+                            wp_nonce_field('ownomail_settings_action', 'ownomail_settings_nonce'); 
+                        ?>
+                        <input type="hidden" name="action" value="ownomail_save_settings">
+                        <input type="hidden" name="ownomail_action" value="update_smtp_settings">
 
-                            <div class="form-group mb-3">
-                                <label for="smtp_host">SMTP Host</label>
-                                <input type="text" class="form-control rounded" id="smtp_host" name="ownomail_smtp_host"
-                                       value="<?php echo esc_attr(get_option('ownomail_smtp_host', '')); ?>" placeholder="mail.example.com">
-                            </div>
+                        <!-- SMTP Host -->
+                        <div class="form-group mb-3">
+                            <label for="smtp_host">SMTP Host</label>
+                            <input type="text" class="form-control rounded" id="smtp_host" name="ownomail_smtp_host"
+                                value="<?php echo esc_attr(get_option('ownomail_smtp_host', '')); ?>" 
+                                placeholder="mail.example.com">
+                        </div>
 
-                            <div class="form-group mb-3">
-                                <label for="smtp_port">SMTP Port</label>
-                                <input type="number" class="form-control rounded" id="smtp_port" name="ownomail_smtp_port"
-                                       value="<?php echo esc_attr(get_option('ownomail_smtp_port', '')); ?>" placeholder="465 or 587">
-                            </div>
+                        <!-- SMTP Port -->
+                        <div class="form-group mb-3">
+                            <label for="smtp_port">SMTP Port</label>
+                            <input type="number" class="form-control rounded" id="smtp_port" name="ownomail_smtp_port"
+                                value="<?php echo esc_attr(get_option('ownomail_smtp_port', '')); ?>" 
+                                placeholder="465 or 587">
+                        </div>
 
-                            <div class="form-group mb-3">
-                                <label for="smtp_username">SMTP Username</label>
-                                <input type="text" class="form-control rounded" id="smtp_username" name="ownomail_smtp_username"
-                                       value="<?php echo esc_attr(get_option('ownomail_smtp_username', '')); ?>" placeholder="project@example.eu">
-                            </div>
+                        <!-- SMTP Username -->
+                        <div class="form-group mb-3">
+                            <label for="smtp_username">SMTP Username</label>
+                            <input type="text" class="form-control rounded" id="smtp_username" name="ownomail_smtp_username"
+                                value="<?php echo esc_attr(get_option('ownomail_smtp_username', '')); ?>" 
+                                placeholder="project@example.eu">
+                        </div>
 
-                            <div class="form-group mb-3">
-                                <label for="smtp_password">SMTP Password</label>
-                                <input type="password" class="form-control rounded" id="smtp_password" name="ownomail_smtp_password"
-                                       value="<?php echo esc_attr(get_option('ownomail_smtp_password', '')); ?>" placeholder="Your Email Password">
-                            </div>
+                        <!-- SMTP Password -->
+                        <div class="form-group mb-3">
+                            <label for="smtp_password">SMTP Password</label>
+                            <input type="password" class="form-control rounded" id="smtp_password" name="ownomail_smtp_password"
+                                value="<?php echo esc_attr(get_option('ownomail_smtp_password', '')); ?>" 
+                                placeholder="Your Email Password">
+                        </div>
 
-                            <button type="submit" class="btn btn-primary w-100">Save SMTP Settings</button>
-                        </form>
-                    </div>
+                        <!-- Encryption -->
+                        <div class="form-group mb-3">
+                            <label for="smtp_encryption">Encryption</label>
+                            <select id="smtp_encryption" name="ownomail_smtp_encryption" class="form-control rounded">
+                                <option value="ssl" <?php selected(get_option('ownomail_smtp_encryption'), 'ssl'); ?>>SSL</option>
+                                <option value="tls" <?php selected(get_option('ownomail_smtp_encryption'), 'tls'); ?>>TLS</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Save SMTP Settings</button>
+                    </form>
                 </div>
             </div>
         </div>

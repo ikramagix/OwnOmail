@@ -9,11 +9,10 @@ if (!defined('ABSPATH')) {
  */
 function ownomail_configure_mailer($phpmailer) {
     // Check if SMTP is enabled via settings
-    $use_smtp = get_option('ownomail_use_smtp', 0);
     $smtp_host = get_option('ownomail_smtp_host', '');
 
-    if ($use_smtp && !empty($smtp_host)) {
-        // Use SMTP if enabled and host is set
+    if (!empty($smtp_host)) {
+        // Use SMTP host is set
         $phpmailer->isSMTP();
         $phpmailer->Host = $smtp_host;
         $phpmailer->Port = get_option('ownomail_smtp_port', 587);
