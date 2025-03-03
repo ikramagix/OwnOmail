@@ -171,14 +171,11 @@ function ownomail_settings_page() {
     ?>
     <div class="wrap container my-5">
     <h1 class="mb-4 text-muted"><?php esc_html_e('OwnOmail Settings', 'ownomail'); ?></h1>
-
         <!-- Preserved notices after redirect -->
         <?php if ($notice = get_transient('ownomail_admin_notices')): ?>
             <div class="alert alert-<?php echo esc_attr($notice['type']); ?> alert-dismissible fade show" role="alert">
                 <?php echo esc_html($notice['message']); ?>
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
             <?php delete_transient('ownomail_admin_notices'); ?>
         <?php endif; ?>
