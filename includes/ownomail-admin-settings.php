@@ -216,7 +216,7 @@ function ownomail_settings_page() {
                             <div class="form-group mb-3">
                                 <label for="sender_name">
                                     Sender Name 
-                                    <i class="fas fa-question-circle text-muted" data-toggle="tooltip" data-placement="right" title="This is the name that will appear as the sender in the recipient's inbox."></i>
+                                    <i class="fas fa-question-circle text-muted" data-bs-toggle="tooltip" data-bs-placement="right" title="This is the name that will appear as the sender in the recipient's inbox."></i>
                                 </label>
                                 <input type="text" class="form-control rounded" id="sender_name" name="ownomail_sender_name"
                                        value="<?php echo esc_attr(get_option('ownomail_sender_name', '')); ?>" required>
