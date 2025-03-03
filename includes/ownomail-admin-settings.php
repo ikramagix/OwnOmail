@@ -97,22 +97,56 @@ function ownomail_handle_form_submission() {
                 break;
             // Update SMTP settings
             case 'update_smtp_settings':
-                $success = update_option('ownomail_smtp_host', sanitize_text_field($_POST['ownomail_smtp_host'])) &&
-                           update_option('ownomail_smtp_port', intval($_POST['ownomail_smtp_port'])) &&
-                           update_option('ownomail_smtp_username', sanitize_text_field($_POST['ownomail_smtp_username'])) &&
-                           update_option('ownomail_smtp_password', sanitize_text_field($_POST['ownomail_smtp_password'])) &&
-                           update_option('ownomail_smtp_encryption', sanitize_text_field($_POST['ownomail_smtp_encryption']));
-            
-                if ($success) {
+                $smtp_host = sanitize_text_field($_POST['ownomail_smtp_host']);
+                $smtp_port = intval($_POST['ownomail_smtp_port']);
+                $smtp_username = sanitize_text_field($_POST['ownomail_smtp_username']);
+                $smtp_password = sanitize_text_field($_POST['ownomail_smtp_password']);
+                $smtp_encryption = sanitize_text_field($_POST['ownomail_smtp_encryption']);
+
+                // Validate required fields
+                if (empty($smtp_host) || empty($smtp_port) || empty($smtp_username) || empty($smtp_password)) {
+                    // Warning if required fields are missing
                     set_transient('ownomail_admin_notices', [
-                        'type'    => 'success',
-                        'message' => __('✅ SMTP settings updated successfully.', 'ownomail')
-                    ], 30);
-                } else {
-                    set_transient('ownomail_admin_notices', [
-                        'type'    => 'danger',
-                        'message' => __('❌ Failed to update SMTP settings.', 'ownomail')
+                        'type'    => 'warning',
+                        'message' => __('⚠️ SMTP settings were not saved because some required fields are missing or invalid.', 'ownomail')
                     ], 15);
+                } elseif (!filter_var($smtp_host, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)) {
+                    // Warning if SMTP host is invalid
+                    set_transient('ownomail_admin_notices', [
+                        'type'    => 'warning',
+                        'message' => __('⚠️ Invalid SMTP host. Please enter a valid hostname (e.g., mail.example.com).', 'ownomail')
+                    ], 15);
+                } elseif ($smtp_port < 1 || $smtp_port > 65535) {
+                    // Warning if SMTP port is invalid
+                    set_transient('ownomail_admin_notices', [
+                        'type'    => 'warning',
+                        'message' => __('⚠️ Invalid SMTP port. Please enter a port between 1 and 65535.', 'ownomail')
+                    ], 15);
+                } elseif (!in_array($smtp_encryption, ['ssl', 'tls'])) {
+                    // Warning if encryption is invalid
+                    set_transient('ownomail_admin_notices', [
+                        'type'    => 'warning',
+                        'message' => __('⚠️ Invalid encryption method. Please choose SSL or TLS.', 'ownomail')
+                    ], 15);
+                } else {
+                    // Proceed to save if everything is valid
+                    $success = update_option('ownomail_smtp_host', $smtp_host) &&
+                            update_option('ownomail_smtp_port', $smtp_port) &&
+                            update_option('ownomail_smtp_username', $smtp_username) &&
+                            update_option('ownomail_smtp_password', $smtp_password) &&
+                            update_option('ownomail_smtp_encryption', $smtp_encryption);
+
+                    if ($success) {
+                        set_transient('ownomail_admin_notices', [
+                            'type'    => 'success',
+                            'message' => __('✅ SMTP settings updated successfully.', 'ownomail')
+                        ], 30);
+                    } else {
+                        set_transient('ownomail_admin_notices', [
+                            'type'    => 'danger',
+                            'message' => __('❌ Critical error: Failed to update SMTP settings. Please try again or contact support.', 'ownomail')
+                        ], 15);
+                    }
                 }
                 break;
             // Unknown action
