@@ -52,16 +52,7 @@ function ownomail_enqueue_assets($hook) {
     wp_enqueue_style('bootstrap-css', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css');
     wp_enqueue_script('bootstrap-js', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js', ['jquery'], null, true);
     // // Load Font Awesome
-    echo '<script src="https://kit.fontawesome.com/c69a9a647b.js" crossorigin="anonymous"></script>';
-    // Tooltip Initialization Script
-    echo '
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            let tooltipTriggerList = [].slice.call(document.querySelectorAll("[data-bs-toggle=\'tooltip\']"));
-            let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-                return new bootstrap.Tooltip(tooltipTriggerEl);
-            });
-        });
-    </script>';  
+    wp_enqueue_style('font-awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css');
+
 }
 add_action('admin_enqueue_scripts', 'ownomail_enqueue_bootstrap');

@@ -213,7 +213,7 @@ function ownomail_settings_page() {
                             <div class="form-group mb-3">
                                 <label for="sender_name">
                                     Sender Name 
-                                    <<i class="fa-solid fa-circle-question" data-bs-toggle="tooltip" data-bs-placement="top" title="This is the name that will appear as the sender in the recipient's inbox."></i>
+                                    <i class="fa-solid fa-circle-question" data-bs-toggle="tooltip" data-bs-placement="top" title="This is the name that will appear as the sender in the recipient's inbox."></i>
                                 </label>
                                 <input type="text" class="form-control rounded" id="sender_name" name="ownomail_sender_name"
                                        value="<?php echo esc_attr(get_option('ownomail_sender_name', '')); ?>" required>
@@ -312,6 +312,14 @@ function ownomail_settings_page() {
                 </div>
             </div>
         </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+        </script>
     </div>
     <?php
 }
