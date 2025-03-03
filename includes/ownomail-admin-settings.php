@@ -71,10 +71,12 @@ function ownomail_handle_form_submission() {
                         'message' => __('✅ Sender name updated successfully.', 'ownomail')
                     ], 30);
                 } else {
-                    add_settings_error('ownomail_options_group', 'sender_name_failed', __('❌ Failed to update sender name.', 'ownomail'), 'error');
+                    set_transient('ownomail_admin_notices', [
+                        'type'    => 'danger',
+                        'message' => __('❌ Failed to update sender name.', 'ownomail')
+                    ], 30);
                 }
                 break;
-
             // Update email format
             case 'update_email_format':
                 if (update_option('ownomail_email_format', sanitize_text_field($_POST['ownomail_email_format']))) {
