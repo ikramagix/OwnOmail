@@ -66,7 +66,10 @@ function ownomail_handle_form_submission() {
             // Update sender name
             case 'update_sender_name':
                 if (update_option('ownomail_sender_name', sanitize_text_field($_POST['ownomail_sender_name']))) {
-                    add_settings_error('ownomail_options_group', 'sender_name_updated', __('✅ Sender name updated successfully.', 'ownomail'), 'success');
+                    set_transient('ownomail_admin_notices', [
+                        'type'    => 'success',
+                        'message' => __('✅ Sender name updated successfully.', 'ownomail')
+                    ], 30);
                 } else {
                     add_settings_error('ownomail_options_group', 'sender_name_failed', __('❌ Failed to update sender name.', 'ownomail'), 'error');
                 }
@@ -116,8 +119,18 @@ add_action('admin_post_ownomail_save_settings', 'ownomail_handle_form_submission
 function ownomail_settings_page() {
     ?>
     <div class="wrap container my-5">
-        <h1 class="mb-4 text-muted"><?php esc_html_e('OwnOmail Settings', 'ownomail'); ?></h1>
-        
+    <h1 class="mb-4 text-muted"><?php esc_html_e('OwnOmail Settings', 'ownomail'); ?></h1>
+
+        <!-- Preserved notices after redirect -->
+        <?php if ($notice = get_transient('ownomail_admin_notices')): ?>
+            <div class="alert alert-<?php echo esc_attr($notice['type']); ?> alert-dismissible fade show" role="alert">
+                <?php echo esc_html($notice['message']); ?>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <?php delete_transient('ownomail_admin_notices'); ?>
+        <?php endif; ?>
         <!-- Use Bootstrap grid for a cleaner layout -->
         <div class="row">
             <!-- Left Column: Sender Information & Email Format -->
