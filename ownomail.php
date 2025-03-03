@@ -41,8 +41,13 @@ function ownomail_activation_admin_notice() {
 }
 add_action('admin_notices', 'ownomail_activation_admin_notice');
 
-// Enqueue Bootstrap CSS and JS for admin pages
-function ownomail_enqueue_bootstrap() {
+// Enqueue Bootstrap
+function ownomail_enqueue_bootstrap($hook) {
+    // Load Bootstrap ONLY on OwnOmail's settings page
+    if ($hook !== 'toplevel_page_ownomail') {
+        return;
+    }
+    // Now enqueue
     wp_enqueue_style('bootstrap-css', 'https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css');
     wp_enqueue_script('bootstrap-js', 'https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js', ['jquery'], null, true);
 }
