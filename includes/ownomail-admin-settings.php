@@ -74,7 +74,7 @@ function ownomail_handle_form_submission() {
                     set_transient('ownomail_admin_notices', [
                         'type'    => 'danger',
                         'message' => __('❌ Failed to update sender name.', 'ownomail')
-                    ], 30);
+                    ], 10);
                 }
                 break;
             // Update email format
