@@ -214,7 +214,10 @@ function ownomail_settings_page() {
                             <input type="hidden" name="ownomail_action" value="update_sender_name">
 
                             <div class="form-group mb-3">
-                                <label for="sender_name">Sender Name</label>
+                                <label for="sender_name">
+                                    Sender Name 
+                                    <i class="fas fa-question-circle text-muted" data-toggle="tooltip" data-placement="right" title="This is the name that will appear as the sender in the recipient's inbox."></i>
+                                </label>
                                 <input type="text" class="form-control rounded" id="sender_name" name="ownomail_sender_name"
                                        value="<?php echo esc_attr(get_option('ownomail_sender_name', '')); ?>" required>
                             </div>
@@ -312,6 +315,14 @@ function ownomail_settings_page() {
                 </div>
             </div>
         </div>
+        <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+            tooltipTriggerList.forEach(tooltipTriggerEl => {
+                new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+        </script>
     </div>
     <?php
 }
