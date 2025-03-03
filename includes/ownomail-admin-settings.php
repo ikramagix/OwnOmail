@@ -57,12 +57,17 @@ function ownomail_handle_form_submission() {
             // Update sender email
             case 'update_sender_email':
                 if (update_option('ownomail_sender_email', sanitize_email($_POST['ownomail_sender_email']))) {
-                    add_settings_error('ownomail_options_group', 'sender_email_updated', __('✅ Sender email updated successfully.', 'ownomail'), 'success');
+                    set_transient('ownomail_admin_notices', [
+                        'type'    => 'success',
+                        'message' => __('✅ Sender email updated successfully.', 'ownomail')
+                    ], 30);
                 } else {
-                    add_settings_error('ownomail_options_group', 'sender_email_failed', __('❌ Failed to update sender email.', 'ownomail'), 'error');
+                    set_transient('ownomail_admin_notices', [
+                        'type'    => 'danger',
+                        'message' => __('❌ Failed to update sender email.', 'ownomail')
+                    ], 15);
                 }
                 break;
-
             // Update sender name
             case 'update_sender_name':
                 if (update_option('ownomail_sender_name', sanitize_text_field($_POST['ownomail_sender_name']))) {
@@ -80,35 +85,47 @@ function ownomail_handle_form_submission() {
             // Update email format
             case 'update_email_format':
                 if (update_option('ownomail_email_format', sanitize_text_field($_POST['ownomail_email_format']))) {
-                    add_settings_error('ownomail_options_group', 'email_format_updated', __('✅ Email format updated successfully.', 'ownomail'), 'success');
+                    set_transient('ownomail_admin_notices', [
+                        'type'    => 'success',
+                        'message' => __('✅ Email format updated successfully.', 'ownomail')
+                    ], 30);
                 } else {
-                    add_settings_error('ownomail_options_group', 'email_format_failed', __('❌ Failed to update email format.', 'ownomail'), 'error');
+                    set_transient('ownomail_admin_notices', [
+                        'type'    => 'danger',
+                        'message' => __('❌ Failed to update email format.', 'ownomail')
+                    ], 15);
                 }
                 break;
-
             // Update SMTP settings
             case 'update_smtp_settings':
                 $success = update_option('ownomail_use_smtp', isset($_POST['ownomail_use_smtp'])) &&
-                           update_option('ownomail_smtp_host', sanitize_text_field($_POST['ownomail_smtp_host'])) &&
-                           update_option('ownomail_smtp_port', intval($_POST['ownomail_smtp_port'])) &&
-                           update_option('ownomail_smtp_username', sanitize_text_field($_POST['ownomail_smtp_username'])) &&
-                           update_option('ownomail_smtp_password', sanitize_text_field($_POST['ownomail_smtp_password'])) &&
-                           update_option('ownomail_smtp_encryption', sanitize_text_field($_POST['ownomail_smtp_encryption']));
+                        update_option('ownomail_smtp_host', sanitize_text_field($_POST['ownomail_smtp_host'])) &&
+                        update_option('ownomail_smtp_port', intval($_POST['ownomail_smtp_port'])) &&
+                        update_option('ownomail_smtp_username', sanitize_text_field($_POST['ownomail_smtp_username'])) &&
+                        update_option('ownomail_smtp_password', sanitize_text_field($_POST['ownomail_smtp_password'])) &&
+                        update_option('ownomail_smtp_encryption', sanitize_text_field($_POST['ownomail_smtp_encryption']));
 
                 if ($success) {
-                    add_settings_error('ownomail_options_group', 'smtp_settings_updated', __('✅ SMTP settings updated successfully.', 'ownomail'), 'success');
+                    set_transient('ownomail_admin_notices', [
+                        'type'    => 'success',
+                        'message' => __('✅ SMTP settings updated successfully.', 'ownomail')
+                    ], 30);
                 } else {
-                    add_settings_error('ownomail_options_group', 'smtp_settings_failed', __('❌ Failed to update SMTP settings.', 'ownomail'), 'error');
+                    set_transient('ownomail_admin_notices', [
+                        'type'    => 'danger',
+                        'message' => __('❌ Failed to update SMTP settings.', 'ownomail')
+                    ], 15);
                 }
                 break;
-
             // Unknown action
             default:
-                add_settings_error('ownomail_options_group', 'unknown_action', __('❌ Unknown action. Please try one of the available options.', 'ownomail'), 'error');
+                set_transient('ownomail_admin_notices', [
+                    'type'    => 'danger',
+                    'message' => __('❌ An unexpected error occurred. Please try again. If the issue persists, contact support.', 'ownomail')
+                ], 15);
                 break;
         }
     }
-
     // Redirect back to settings page with admin notices
     wp_redirect(add_query_arg(['page' => 'ownomail', 'settings-updated' => 'true'], admin_url('admin.php')));
     exit; // Important! (To prevent further execution)
@@ -221,7 +238,7 @@ function ownomail_settings_page() {
                             <div class="form-group mb-3">
                                 <label for="smtp_port">SMTP Port</label>
                                 <input type="number" class="form-control rounded" id="smtp_port" name="ownomail_smtp_port"
-                                       value="<?php echo esc_attr(get_option('ownomail_smtp_port', '465')); ?>" placeholder="465 or 587">
+                                       value="<?php echo esc_attr(get_option('ownomail_smtp_port', '')); ?>" placeholder="465 or 587">
                             </div>
 
                             <div class="form-group mb-3">
