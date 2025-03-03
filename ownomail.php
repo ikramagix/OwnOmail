@@ -32,10 +32,11 @@ register_activation_hook(__FILE__, 'ownomail_activate');
 // Admin notice after activation.
 function ownomail_activation_admin_notice() {
     if ( get_option('ownomail_activation_notice') ) {
-        echo '<div class="notice notice-warning is-dismissible">
-            <p>' . esc_html__('OwnOmail is activated. Please go to the OwnOmail settings page and configure your SMTP settings (otherwise emails will not work as expected).', 'ownomail') . '</p>
-        </div>';
-        // Remove notice after display.
+        echo '<div class="notice notice-success is-dismissible">
+        <p>' . esc_html__('🎉 OwnOmail is now activated! Visit the OwnOmail settings page to start personalizing your email experience with custom sender information, formats, SMTP settings and much more to come. Make it yours.', 'ownomail') . '</p>
+        <p><a href="' . esc_url(admin_url('admin.php?page=ownomail')) . '" class="button button-success">Take me there</a></p>
+    </div>';            
+    // Remove notice after display.
         delete_option('ownomail_activation_notice');
     }
 }
