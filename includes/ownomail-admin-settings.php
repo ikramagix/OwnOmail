@@ -93,6 +93,13 @@ function ownomail_handle_form_submission() {
                 break;
         }
     }
+    wp_redirect(
+        add_query_arg(
+            ['page' => 'ownomail'],
+            admin_url('admin.php')
+        )
+    );
+    exit; // Important! (To prevent further execution)
 }
 add_action('admin_post_ownomail_save_settings', 'ownomail_handle_form_submission');
 
