@@ -48,35 +48,43 @@ add_action('admin_menu', 'ownomail_add_admin_menu');
 /**
  * Handle form submissions for each section.
  */
+/**
+ * Handle form submissions for each section with detailed admin notices.
+ */
 function ownomail_handle_form_submission() {
     if (!empty($_POST['ownomail_action'])) {
         check_admin_referer('ownomail_settings_action', 'ownomail_settings_nonce');
 
         switch ($_POST['ownomail_action']) {
+
+            // Update sender email
             case 'update_sender_email':
                 if (update_option('ownomail_sender_email', sanitize_email($_POST['ownomail_sender_email']))) {
-                    add_settings_error('ownomail_options_group', 'sender_email_updated', __('✅ Sender email updated.', 'ownomail'), 'success');
+                    add_settings_error('ownomail_options_group', 'sender_email_updated', __('✅ Sender email updated successfully.', 'ownomail'), 'success');
                 } else {
                     add_settings_error('ownomail_options_group', 'sender_email_failed', __('❌ Failed to update sender email.', 'ownomail'), 'error');
                 }
                 break;
 
+            // Update sender name
             case 'update_sender_name':
                 if (update_option('ownomail_sender_name', sanitize_text_field($_POST['ownomail_sender_name']))) {
-                    add_settings_error('ownomail_options_group', 'sender_name_updated', __('✅ Sender name updated.', 'ownomail'), 'success');
+                    add_settings_error('ownomail_options_group', 'sender_name_updated', __('✅ Sender name updated successfully.', 'ownomail'), 'success');
                 } else {
                     add_settings_error('ownomail_options_group', 'sender_name_failed', __('❌ Failed to update sender name.', 'ownomail'), 'error');
                 }
                 break;
 
+            // Update email format
             case 'update_email_format':
-                if (update_option('ownomail_email_format', $_POST['ownomail_email_format'])) {
-                    add_settings_error('ownomail_options_group', 'email_format_updated', __('✅ Email format updated.', 'ownomail'), 'success');
+                if (update_option('ownomail_email_format', sanitize_text_field($_POST['ownomail_email_format']))) {
+                    add_settings_error('ownomail_options_group', 'email_format_updated', __('✅ Email format updated successfully.', 'ownomail'), 'success');
                 } else {
                     add_settings_error('ownomail_options_group', 'email_format_failed', __('❌ Failed to update email format.', 'ownomail'), 'error');
                 }
                 break;
 
+            // Update SMTP settings
             case 'update_smtp_settings':
                 $success = update_option('ownomail_use_smtp', isset($_POST['ownomail_use_smtp'])) &&
                            update_option('ownomail_smtp_host', sanitize_text_field($_POST['ownomail_smtp_host'])) &&
@@ -91,14 +99,16 @@ function ownomail_handle_form_submission() {
                     add_settings_error('ownomail_options_group', 'smtp_settings_failed', __('❌ Failed to update SMTP settings.', 'ownomail'), 'error');
                 }
                 break;
+
+            // Unknown action
+            default:
+                add_settings_error('ownomail_options_group', 'unknown_action', __('❌ Unknown action. Please try one of the available options.', 'ownomail'), 'error');
+                break;
         }
     }
-    wp_redirect(
-        add_query_arg(
-            ['page' => 'ownomail'],
-            admin_url('admin.php')
-        )
-    );
+
+    // Redirect back to settings page with admin notices
+    wp_redirect(add_query_arg(['page' => 'ownomail', 'settings-updated' => 'true'], admin_url('admin.php')));
     exit; // Important! (To prevent further execution)
 }
 add_action('admin_post_ownomail_save_settings', 'ownomail_handle_form_submission');
@@ -109,7 +119,7 @@ add_action('admin_post_ownomail_save_settings', 'ownomail_handle_form_submission
 function ownomail_settings_page() {
     ?>
     <div class="wrap container my-5">
-        <h1 class="mb-4 text-primary"><?php esc_html_e('OwnOmail Settings', 'ownomail'); ?></h1>
+        <h1 class="mb-4 text-muted"><?php esc_html_e('OwnOmail Settings', 'ownomail'); ?></h1>
         
         <!-- Use Bootstrap grid for a cleaner layout -->
         <div class="row">
@@ -121,7 +131,8 @@ function ownomail_settings_page() {
                         <h5 class="mb-0">Sender Information</h5>
                     </div>
                     <div class="card-body">
-                        <form method="post" action="<?php echo admin_url('admin-post.php'); ?>">
+                        <!-- Sender Email Form -->
+                        <form method="post" action="<?php echo admin_url('admin-post.php'); ?>" class="mb-4">
                             <?php wp_nonce_field('ownomail_settings_action', 'ownomail_settings_nonce'); ?>
                             <input type="hidden" name="action" value="ownomail_save_settings">
                             <input type="hidden" name="ownomail_action" value="update_sender_email">
@@ -132,18 +143,27 @@ function ownomail_settings_page() {
                                        value="<?php echo esc_attr(get_option('ownomail_sender_email', '')); ?>" required>
                             </div>
 
+                            <button type="submit" class="btn btn-primary w-100">Save Sender Email</button>
+                        </form>
+
+                        <!-- Sender Name Form -->
+                        <form method="post" action="<?php echo admin_url('admin-post.php'); ?>">
+                            <?php wp_nonce_field('ownomail_settings_action', 'ownomail_settings_nonce'); ?>
+                            <input type="hidden" name="action" value="ownomail_save_settings">
+                            <input type="hidden" name="ownomail_action" value="update_sender_name">
+
                             <div class="form-group mb-3">
                                 <label for="sender_name">Sender Name</label>
                                 <input type="text" class="form-control rounded" id="sender_name" name="ownomail_sender_name"
                                        value="<?php echo esc_attr(get_option('ownomail_sender_name', '')); ?>" required>
                             </div>
 
-                            <button type="submit" class="btn btn-primary w-100">Save Sender Info</button>
+                            <button type="submit" class="btn btn-primary w-100">Save Sender Name</button>
                         </form>
                     </div>
                 </div>
 
-                <!-- Email Format -->
+                <!-- Email Format Form -->
                 <div class="card mb-4 shadow-sm border-0 rounded">
                     <div class="card-header bg-primary text-white rounded-top">
                         <h5 class="mb-0">Email Format</h5>
@@ -178,12 +198,6 @@ function ownomail_settings_page() {
                             <input type="hidden" name="action" value="ownomail_save_settings">
                             <input type="hidden" name="ownomail_action" value="update_smtp_settings">
 
-                            <div class="form-group form-check mb-4">
-                                <input type="checkbox" class="form-check-input" id="use_smtp" name="ownomail_use_smtp" value="1"
-                                       <?php checked(1, get_option('ownomail_use_smtp', 0)); ?>>
-                                <label class="form-check-label" for="use_smtp">Use SMTP for sending emails</label>
-                            </div>
-
                             <div class="form-group mb-3">
                                 <label for="smtp_host">SMTP Host</label>
                                 <input type="text" class="form-control rounded" id="smtp_host" name="ownomail_smtp_host"
@@ -206,14 +220,6 @@ function ownomail_settings_page() {
                                 <label for="smtp_password">SMTP Password</label>
                                 <input type="password" class="form-control rounded" id="smtp_password" name="ownomail_smtp_password"
                                        value="<?php echo esc_attr(get_option('ownomail_smtp_password', '')); ?>" placeholder="Your Email Password">
-                            </div>
-
-                            <div class="form-group mb-3">
-                                <label for="smtp_encryption">Encryption</label>
-                                <select id="smtp_encryption" name="ownomail_smtp_encryption" class="form-control rounded">
-                                    <option value="ssl" <?php selected(get_option('ownomail_smtp_encryption'), 'ssl'); ?>>SSL</option>
-                                    <option value="tls" <?php selected(get_option('ownomail_smtp_encryption'), 'tls'); ?>>TLS</option>
-                                </select>
                             </div>
 
                             <button type="submit" class="btn btn-primary w-100">Save SMTP Settings</button>
