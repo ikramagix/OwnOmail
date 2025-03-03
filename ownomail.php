@@ -43,13 +43,25 @@ function ownomail_activation_admin_notice() {
 add_action('admin_notices', 'ownomail_activation_admin_notice');
 
 // Enqueue Bootstrap
-function ownomail_enqueue_bootstrap($hook) {
+function ownomail_enqueue_assets($hook) {
     // Load Bootstrap ONLY on OwnOmail's settings page
     if ($hook !== 'toplevel_page_ownomail') {
         return;
     }
-    // Now enqueue
+    // Bootstrap
     wp_enqueue_style('bootstrap-css', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css');
     wp_enqueue_script('bootstrap-js', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js', ['jquery'], null, true);
+    // // Load Font Awesome
+    echo '<script src="https://kit.fontawesome.com/c69a9a647b.js" crossorigin="anonymous"></script>';
+    // Tooltip Initialization Script
+    echo '
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let tooltipTriggerList = [].slice.call(document.querySelectorAll("[data-bs-toggle=\'tooltip\']"));
+            let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+    </script>';  
 }
 add_action('admin_enqueue_scripts', 'ownomail_enqueue_bootstrap');
