@@ -33,7 +33,7 @@ register_activation_hook(__FILE__, 'ownomail_activate');
 function ownomail_activation_admin_notice() {
     if ( get_option('ownomail_activation_notice') ) {
         echo '<div class="notice notice-success is-dismissible">
-        <p>' . esc_html__('🎉 OwnOmail is now activated! Visit the OwnOmail settings page to start personalizing your email experience with custom sender information, formats, SMTP settings and much more to come. Make it yours.', 'ownomail') . '</p>
+        <p>' . esc_html__('🎉 OwnOmail is now activated! Visit the OwnOmail settings page to start personalizing your email experience with custom sender information, formats, SMTP settings and much more to come. Let\'s make it yours.', 'ownomail') . '</p>
         <p><a href="' . esc_url(admin_url('admin.php?page=ownomail')) . '" class="button button-success">Take me there</a></p>
     </div>';            
     // Remove notice after display.
