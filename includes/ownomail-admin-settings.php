@@ -46,9 +46,6 @@ function ownomail_add_admin_menu() {
 add_action('admin_menu', 'ownomail_add_admin_menu');
 
 /**
- * Handle form submissions for each section.
- */
-/**
  * Handle form submissions for each section with detailed admin notices.
  */
 function ownomail_handle_form_submission() {
@@ -170,6 +167,8 @@ function ownomail_settings_page() {
                     </div>
                     <div class="card-body">
                         <form method="post" action="<?php echo admin_url('admin-post.php'); ?>">
+                            <!-- Security: Nonce for validation -->
+                            <?php wp_nonce_field('ownomail_settings_action', 'ownomail_settings_nonce'); ?>
                             <input type="hidden" name="action" value="ownomail_save_settings">
                             <input type="hidden" name="ownomail_action" value="update_email_format">
 
