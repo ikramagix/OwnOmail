@@ -39,7 +39,7 @@ function ownomail_add_admin_menu() {
         'ownomail',
         'ownomail_settings_page',
         'dashicons-buddicons-pm',
-        100
+        25
     );
 }
 add_action('admin_menu', 'ownomail_add_admin_menu');
