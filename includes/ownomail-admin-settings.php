@@ -7,7 +7,7 @@ if (!defined('ABSPATH')) {
  * Register plugin settings with validation callbacks.
  */
 function ownomail_register_settings() {
-    register_setting('ownomail_options_group', 'ownomail_sender_email');
+    register_setting('ownomail_options_group', 'ownomail_sender_email', ['sanitize_callback' => 'sanitize_email']);
     register_setting('ownomail_options_group', 'ownomail_sender_name');
     register_setting('ownomail_options_group', 'ownomail_email_format');
     
