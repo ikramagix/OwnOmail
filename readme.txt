@@ -1,4 +1,4 @@
-=== OwnOmail: Custom-made. Made simple. Change your sender name, email address and more. ===
+=== OwnOmail ===
 Contributors: @ikramagix
 Tags: email, customization, sender name, sender email, mailer, from address, site identity, email settings, mail customization, no-code
 Requires at least WP version: 5.0
