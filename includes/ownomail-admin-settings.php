@@ -190,7 +190,7 @@ function ownomail_settings_page() {
                     </div>
                     <div class="card-body">
                         <!-- Sender Email Form -->
-                        <form method="post" action="<?php echo admin_url('admin-post.php'); ?>" class="mb-4">
+                        <form method="post" action="<?php <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>"> ?>" class="mb-4">
                             <?php wp_nonce_field('ownomail_settings_action', 'ownomail_settings_nonce'); ?>
                             <input type="hidden" name="action" value="ownomail_save_settings">
                             <input type="hidden" name="ownomail_action" value="update_sender_email">
@@ -205,7 +205,7 @@ function ownomail_settings_page() {
                         </form>
 
                         <!-- Sender Name Form -->
-                        <form method="post" action="<?php echo admin_url('admin-post.php'); ?>">
+                        <form method="post" action="<?php <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>"> ?>">
                             <?php wp_nonce_field('ownomail_settings_action', 'ownomail_settings_nonce'); ?>
                             <input type="hidden" name="action" value="ownomail_save_settings">
                             <input type="hidden" name="ownomail_action" value="update_sender_name">
@@ -230,7 +230,7 @@ function ownomail_settings_page() {
                         <h5 class="mb-0">Email Format</h5>
                     </div>
                     <div class="card-body">
-                        <form method="post" action="<?php echo admin_url('admin-post.php'); ?>">
+                        <form method="post" action="<?php <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>"> ?>">
                             <!-- Security: Nonce for validation -->
                             <?php wp_nonce_field('ownomail_settings_action', 'ownomail_settings_nonce'); ?>
                             <input type="hidden" name="action" value="ownomail_save_settings">
@@ -258,7 +258,7 @@ function ownomail_settings_page() {
                 </div>
                 <div class="card-body">
                     <!-- Single Form to Update All SMTP Fields -->
-                    <form method="post" action="<?php echo admin_url('admin-post.php'); ?>">
+                    <form method="post" action="<?php <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>"> ?>">
                         <?php 
                             // Nonce for security
                             wp_nonce_field('ownomail_settings_action', 'ownomail_settings_nonce'); 
