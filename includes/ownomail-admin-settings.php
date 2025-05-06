@@ -159,7 +159,7 @@ function ownomail_handle_form_submission() {
         }
     }
     // Redirect back to settings page with admin notices
-    wp_redirect(add_query_arg(['page' => 'ownomail', 'settings-updated' => 'true'], admin_url('admin.php')));
+    wp_redirect(esc_url(add_query_arg(['page' => 'ownomail', 'settings-updated' => 'true'], admin_url('admin.php'))));
     exit; // Important! (To prevent further execution)
 }
 add_action('admin_post_ownomail_save_settings', 'ownomail_handle_form_submission');
