@@ -8,15 +8,15 @@ if (!defined('ABSPATH')) {
  */
 function ownomail_register_settings() {
     register_setting('ownomail_options_group', 'ownomail_sender_email', ['sanitize_callback' => 'sanitize_email']);
-    register_setting('ownomail_options_group', 'ownomail_sender_name');
-    register_setting('ownomail_options_group', 'ownomail_email_format');
+    register_setting('ownomail_options_group', 'ownomail_sender_name', ['sanitize_callback' => 'sanitize_text_field']);
+    register_setting('ownomail_options_group', 'ownomail_email_format', ['sanitize_callback' => 'sanitize_text_field']);
     
     // Outgoing (SMTP)
-    register_setting('ownomail_options_group', 'ownomail_smtp_host');
-    register_setting('ownomail_options_group', 'ownomail_smtp_port');
-    register_setting('ownomail_options_group', 'ownomail_smtp_username');
-    register_setting('ownomail_options_group', 'ownomail_smtp_password');
-    register_setting('ownomail_options_group', 'ownomail_smtp_encryption');
+    register_setting('ownomail_options_group', 'ownomail_smtp_host', ['sanitize_callback' => 'sanitize_text_field']);
+    register_setting('ownomail_options_group', 'ownomail_smtp_port', ['sanitize_callback' => 'absint']);
+    register_setting('ownomail_options_group', 'ownomail_smtp_username', ['sanitize_callback' => 'sanitize_text_field']);
+    register_setting('ownomail_options_group', 'ownomail_smtp_password', ['sanitize_callback' => 'sanitize_text_field']); // Consider encrypting or handling securely
+    register_setting('ownomail_options_group', 'ownomail_smtp_encryption', ['sanitize_callback' => 'sanitize_text_field']);    
 }
 add_action('admin_init', 'ownomail_register_settings');
 
