@@ -49,9 +49,9 @@ function ownomail_enqueue_assets($hook) {
         return;
     }
     // Bootstrap
-    wp_enqueue_style('bootstrap-css', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css');
-    wp_enqueue_script('bootstrap-js', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js', ['jquery'], null, true);
-    // // Load Font Awesome
+    wp_enqueue_style('bootstrap-css', plugins_url('assets/css/bootstrap.min.css', __FILE__));
+    wp_enqueue_script('bootstrap-js', plugins_url('assets/js/bootstrap.bundle.min.js', __FILE__), [], null, true);
+        // // Load Font Awesome
     wp_enqueue_style('font-awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css');
 
 }
