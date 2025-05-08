@@ -55,7 +55,8 @@ function ownomail_handle_form_submission() {
 
             // Update sender email
             case 'update_sender_email':
-                if (update_option('ownomail_sender_email', sanitize_email($_POST['ownomail_sender_email']))) {
+                $val = isset($_POST['ownomail_sender_email']) ? sanitize_email(wp_unslash($_POST['ownomail_sender_email'])) : '';
+                if (update_option('ownomail_sender_email', $val)) {
                     set_transient('ownomail_admin_notices', [
                         'type'    => 'success',
                         'message' => __('✅ Sender email updated successfully.', 'ownomail')
